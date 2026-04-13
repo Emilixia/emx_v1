@@ -1,0 +1,11 @@
+node_modules/
+dist/
+out/
+release/
+.cache/
+*.pyc
+__pycache__/
+*.pyo
+.pytest_cache/
+python/__pycache__/
+tests/__pycache__/

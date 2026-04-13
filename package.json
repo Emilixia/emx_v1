@@ -19,7 +19,9 @@
       {
         "from": "python",
         "to": "python",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "files": [
@@ -30,12 +32,21 @@
     ]
   },
   "dependencies": {
-    "electron": "^28.3.3"
+    "electron": "41.2.0"
   },
   "devDependencies": {
-    "electron-builder": "^24.13.3"
+    "electron-builder": "^26.8.2"
   },
-  "keywords": ["flower", "ai", "electron", "opencv", "identification"],
+  "overrides": {
+    "tar": "^7.5.11"
+  },
+  "keywords": [
+    "flower",
+    "ai",
+    "electron",
+    "opencv",
+    "identification"
+  ],
   "author": "Emilixia",
   "license": "MIT"
 }

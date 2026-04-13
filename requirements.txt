@@ -1,0 +1,27 @@
+# Core AI / CV
+torch>=2.2.0
+torchvision>=0.17.0
+ultralytics>=8.2.0       # YOLOv8
+onnxruntime>=1.18.0      # CPU inference (use onnxruntime-gpu for GPU)
+onnx>=1.16.0
+
+# Image processing
+Pillow>=10.3.0
+opencv-python>=4.9.0.80
+numpy>=1.26.0
+
+# GUI
+PyQt6>=6.7.0
+
+# Reporting
+reportlab>=4.2.0         # PDF generation
+pandas>=2.2.0            # CSV / dataframe handling
+
+# Training utilities
+tqdm>=4.66.0
+scikit-learn>=1.4.0
+matplotlib>=3.8.0
+tensorboard>=2.16.0
+
+# Packaging (Windows)
+pyinstaller>=6.6.0

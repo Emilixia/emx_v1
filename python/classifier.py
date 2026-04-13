@@ -7,22 +7,44 @@ from typing import List, Dict
 
 from PIL import Image
 
-# Default model trained on Oxford 102 Flowers + related datasets.
-# Falls back gracefully when the model cannot be downloaded.
-DEFAULT_MODEL = "dima806/flower_types_image_detection"
 CACHE_DIR = os.path.join(os.path.expanduser("~"), ".emx_flower_cache")
+
+# Ordered list of candidate models.  The first one that loads successfully is
+# used; this makes the classifier resilient to individual models being removed
+# or renamed on the Hugging Face Hub.
+_CANDIDATE_MODELS = [
+    # ViT fine-tuned on TF-Flowers (daisy, dandelion, roses, sunflowers, tulips)
+    "nickmuchi/vit-finetuned-flowers",
+    # Broader ViT flower classifier
+    "Falconsai/flower_classification",
+    # General-purpose ViT (ImageNet-21k) as last resort — has many flower labels
+    "google/vit-base-patch16-224",
+]
 
 
 class FlowerClassifier:
     """Identify flower species in an image and return ranked predictions."""
 
-    def __init__(self, model_name: str = DEFAULT_MODEL) -> None:
+    def __init__(self, model_name: str | None = None) -> None:
         from transformers import pipeline
 
-        self._pipe = pipeline(
-            "image-classification",
-            model=model_name,
-            cache_dir=CACHE_DIR,
+        candidates = [model_name] if model_name else _CANDIDATE_MODELS
+        last_exc: Exception | None = None
+        for candidate in candidates:
+            try:
+                self._pipe = pipeline(
+                    "image-classification",
+                    model=candidate,
+                    cache_dir=CACHE_DIR,
+                )
+                return
+            except Exception as exc:  # noqa: BLE001
+                last_exc = exc
+                continue
+
+        raise RuntimeError(
+            f"Could not load any flower classification model. "
+            f"Please check your internet connection. Last error: {last_exc}"
         )
 
     def classify(self, image_path: str, top_k: int = 5) -> List[Dict]:

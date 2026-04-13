@@ -68,6 +68,28 @@ class TestFlowerClassifier(unittest.TestCase):
         # Stub returns 2 items; result must not exceed top_k
         self.assertLessEqual(len(results), 2)
 
+    def test_classify_crop_returns_list(self):
+        """classify_crop should classify a PIL Image region and return a list."""
+        # Use a real small PIL Image so crop/paste work without mocking PIL internals.
+        img = Image.new("RGB", (200, 200), color=(200, 100, 100))
+        box = {"xmin": 10, "ymin": 10, "xmax": 110, "ymax": 110}
+        results = self._clf.classify_crop(img, box, top_k=2)
+        self.assertIsInstance(results, list)
+        self.assertLessEqual(len(results), 2)
+        if results:
+            self.assertIn("label", results[0])
+            self.assertIn("score", results[0])
+            self.assertIsInstance(results[0]["score"], float)
+
+    def test_classify_crop_square_padding(self):
+        """classify_crop should not raise when the crop is non-square."""
+        img = Image.new("RGB", (400, 300), color=(150, 200, 100))
+        # Wide, non-square box
+        box = {"xmin": 0, "ymin": 0, "xmax": 200, "ymax": 80}
+        # Should not raise
+        results = self._clf.classify_crop(img, box, top_k=1)
+        self.assertIsInstance(results, list)
+
 
 if __name__ == "__main__":
     unittest.main()

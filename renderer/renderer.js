@@ -128,26 +128,54 @@ btnAnalyze.addEventListener('click', async () => {
 
 // ─── Render results ───────────────────────────────────────
 
+function toTitleCase(str) {
+  return String(str).replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 function renderResults(data) {
   // Flower identification
   flowerResults.innerHTML = '';
-  const predictions = data.flowers || [];
-  predictions.forEach((pred, i) => {
-    const pct = Math.round((pred.score || 0) * 100);
-    const item = document.createElement('div');
-    item.className = 'flower-item' + (i === 0 ? ' top' : '');
-    item.innerHTML = `
-      <span class="flower-item-rank">${i + 1}.</span>
-      <span class="flower-item-label">${escapeHtml(pred.label)}</span>
-      <div class="flower-item-bar-wrap">
-        <div class="flower-item-bar" style="width:${pct}%"></div>
-      </div>
-      <span class="flower-item-pct">${pct}%</span>
-    `;
-    flowerResults.appendChild(item);
-  });
 
-  if (predictions.length === 0) {
+  const speciesCounts = Array.isArray(data.species_counts) ? data.species_counts : null;
+  const predictions = data.flowers || [];
+
+  if (speciesCounts && speciesCounts.length > 0) {
+    // Detection-based mode: show per-species stem counts
+    const maxCount = Math.max(...speciesCounts.map((s) => s.count));
+    speciesCounts.forEach((species, i) => {
+      const barWidth = maxCount > 0 ? Math.round((species.count / maxCount) * 100) : 0;
+      const item = document.createElement('div');
+      item.className = 'flower-item' + (i === 0 ? ' top' : '');
+      const stemLabel = species.count === 1 ? '1 stem' : `${species.count} stems`;
+      item.innerHTML = `
+        <span class="flower-item-rank">${i + 1}.</span>
+        <span class="flower-item-label">${escapeHtml(toTitleCase(species.label))}</span>
+        <div class="flower-item-bar-wrap">
+          <div class="flower-item-bar" style="width:${barWidth}%"></div>
+        </div>
+        <span class="flower-item-pct">${escapeHtml(stemLabel)}</span>
+      `;
+      flowerResults.appendChild(item);
+    });
+  } else {
+    // Whole-image fallback mode: show confidence percentages
+    predictions.forEach((pred, i) => {
+      const pct = Math.round((pred.score || 0) * 100);
+      const item = document.createElement('div');
+      item.className = 'flower-item' + (i === 0 ? ' top' : '');
+      item.innerHTML = `
+        <span class="flower-item-rank">${i + 1}.</span>
+        <span class="flower-item-label">${escapeHtml(pred.label)}</span>
+        <div class="flower-item-bar-wrap">
+          <div class="flower-item-bar" style="width:${pct}%"></div>
+        </div>
+        <span class="flower-item-pct">${pct}%</span>
+      `;
+      flowerResults.appendChild(item);
+    });
+  }
+
+  if (predictions.length === 0 && (!speciesCounts || speciesCounts.length === 0)) {
     flowerResults.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem">No flower predictions returned.</p>';
   }
 

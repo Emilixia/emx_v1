@@ -12,6 +12,8 @@ from PIL import Image
 # which is no longer a valid keyword argument in recent transformers releases.
 CACHE_DIR = os.path.join(os.path.expanduser("~"), ".emx_flower_cache")
 os.environ.setdefault("HF_HOME", CACHE_DIR)
+# Suppress the Windows symlink warning that clutters the error log.
+os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
 
 # Ordered list of candidate models.  The first one that loads successfully is
 # used; this makes the classifier resilient to individual models being removed
@@ -72,4 +74,24 @@ class FlowerClassifier:
         """
         image = Image.open(image_path).convert("RGB")
         raw = self._pipe(image, top_k=top_k)
+        return [{"label": r["label"], "score": round(float(r["score"]), 4)} for r in raw]
+
+    def classify_crop(self, image: Image.Image, box: Dict, top_k: int = 3) -> List[Dict]:
+        """Classify a specific region of an already-opened PIL image.
+
+        The region defined by *box* (keys ``xmin``, ``ymin``, ``xmax``, ``ymax``)
+        is cropped, padded to a square to avoid distortion, and then classified.
+
+        Returns up to *top_k* predictions, same format as :meth:`classify`.
+        """
+        crop = image.crop((
+            int(box["xmin"]), int(box["ymin"]),
+            int(box["xmax"]), int(box["ymax"]),
+        ))
+        # Pad to square so the model receives a properly proportioned input.
+        w, h = crop.size
+        size = max(w, h)
+        square = Image.new("RGB", (size, size), (255, 255, 255))
+        square.paste(crop, ((size - w) // 2, (size - h) // 2))
+        raw = self._pipe(square, top_k=top_k)
         return [{"label": r["label"], "score": round(float(r["score"]), 4)} for r in raw]

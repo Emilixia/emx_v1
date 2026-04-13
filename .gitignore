@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
+
+# PyInstaller
+*.spec.bak
+dist/
+build/
+
+# Models (large binary files — obtain via training scripts)
+app/models/*.onnx
+app/models/*.pt
+app/models/*.yaml
+
+# Training artefacts
+training/runs/
+training/data/raw/
+training/data/flowers102/
+training/data/stems/images/
+training/data/stems/labels/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/

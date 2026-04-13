@@ -54,7 +54,7 @@ def get_transforms() -> dict[str, transforms.Compose]:
     return {
         "train": transforms.Compose(
             [
-                transforms.RandomResizedCrop(224, scale=(0.7, 1.0)),
+                transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),
                 transforms.RandomHorizontalFlip(),
                 transforms.RandomRotation(15),
                 transforms.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.2),

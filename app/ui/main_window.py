@@ -101,9 +101,8 @@ class _AnalysisWorker(QThread):
             with concurrent.futures.ThreadPoolExecutor(max_workers=2) as ex:
                 future_clf = ex.submit(clf.predict, pil_image, 5)
                 future_ctr = ex.submit(ctr.count, pil_image)
-
-            predictions = future_clf.result()
-            stem_result = future_ctr.result()
+                predictions = future_clf.result()
+                stem_result = future_ctr.result()
             annotated = ctr.draw_detections(pil_image, stem_result)
 
             self.finished.emit(predictions, stem_result.count, annotated)
@@ -400,8 +399,8 @@ class MainWindow(QMainWindow):
                 with concurrent.futures.ThreadPoolExecutor(max_workers=2) as ex:
                     future_clf = ex.submit(clf.predict, pil_image, 5)
                     future_ctr = ex.submit(ctr.count, pil_image)
-                predictions = future_clf.result()
-                stem_result = future_ctr.result()
+                    predictions = future_clf.result()
+                    stem_result = future_ctr.result()
                 if predictions:
                     species, conf = predictions[0]
                     batch_results.append(

@@ -7,7 +7,11 @@ from typing import List, Dict
 
 from PIL import Image
 
+# Custom cache directory — set via HF_HOME so all huggingface_hub / transformers
+# code picks it up automatically.  This avoids passing cache_dir= to pipeline(),
+# which is no longer a valid keyword argument in recent transformers releases.
 CACHE_DIR = os.path.join(os.path.expanduser("~"), ".emx_flower_cache")
+os.environ.setdefault("HF_HOME", CACHE_DIR)
 
 # Ordered list of candidate models.  The first one that loads successfully is
 # used; this makes the classifier resilient to individual models being removed
@@ -22,12 +26,24 @@ _CANDIDATE_MODELS = [
 ]
 
 
+def _best_device() -> int:
+    """Return 0 (first CUDA GPU) when available, otherwise -1 (CPU)."""
+    try:
+        import torch
+        if torch.cuda.is_available():
+            return 0
+    except Exception:  # noqa: BLE001
+        pass
+    return -1
+
+
 class FlowerClassifier:
     """Identify flower species in an image and return ranked predictions."""
 
     def __init__(self, model_name: str | None = None) -> None:
         from transformers import pipeline
 
+        device = _best_device()
         candidates = [model_name] if model_name else _CANDIDATE_MODELS
         last_exc: Exception | None = None
         for candidate in candidates:
@@ -35,7 +51,7 @@ class FlowerClassifier:
                 self._pipe = pipeline(
                     "image-classification",
                     model=candidate,
-                    cache_dir=CACHE_DIR,
+                    device=device,
                 )
                 return
             except Exception as exc:  # noqa: BLE001

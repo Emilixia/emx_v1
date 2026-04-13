@@ -16,7 +16,7 @@ def _make_transformers_stub():
     """Return a minimal stub for the `transformers` package."""
     transformers = types.ModuleType("transformers")
 
-    def pipeline(task, model=None, cache_dir=None):
+    def pipeline(task, model=None, **kwargs):
         mock_pipe = MagicMock()
         mock_pipe.return_value = [
             {"label": "rose", "score": 0.92},

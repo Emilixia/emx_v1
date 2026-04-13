@@ -9,6 +9,7 @@ const btnAnalyze = document.getElementById('btn-analyze');
 const resultsPlaceholder = document.getElementById('results-placeholder');
 const resultsContent = document.getElementById('results-content');
 const loadingEl = document.getElementById('loading');
+const loadingText = document.getElementById('loading-text');
 const errorBox = document.getElementById('error-box');
 const errorMessage = document.getElementById('error-message');
 
@@ -103,12 +104,24 @@ btnAnalyze.addEventListener('click', async () => {
   btnAnalyze.disabled = true;
 
   try {
+    // Phase 1: ensure Python dependencies are installed (fast on subsequent runs).
+    loadingText.textContent = 'Checking Python dependencies…';
+    const { alreadyInstalled } = await window.flowerAPI.ensureDeps();
+    if (!alreadyInstalled) {
+      // Deps were just installed — update text while we continue.
+      loadingText.textContent = 'Dependencies installed. Analyzing image…';
+    } else {
+      loadingText.textContent = 'Analyzing image…';
+    }
+
+    // Phase 2: run the analysis.
     const result = await window.flowerAPI.analyzeImage(currentImagePath);
     renderResults(result);
   } catch (err) {
     showError(err.message || String(err));
   } finally {
     loadingEl.classList.add('hidden');
+    loadingText.textContent = 'Analyzing image…';
     btnAnalyze.disabled = false;
   }
 });

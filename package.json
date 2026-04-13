@@ -1,0 +1,41 @@
+{
+  "name": "emx-flower-analyzer",
+  "version": "1.0.0",
+  "description": "AI-powered flower identification and stem counting for Windows",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --x64",
+    "pack": "electron-builder --dir"
+  },
+  "build": {
+    "appId": "com.emilixia.emx-flower-analyzer",
+    "productName": "EMX Flower Analyzer",
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "extraResources": [
+      {
+        "from": "python",
+        "to": "python",
+        "filter": ["**/*"]
+      }
+    ],
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "assets/**/*"
+    ]
+  },
+  "dependencies": {
+    "electron": "^28.3.3"
+  },
+  "devDependencies": {
+    "electron-builder": "^24.13.3"
+  },
+  "keywords": ["flower", "ai", "electron", "opencv", "identification"],
+  "author": "Emilixia",
+  "license": "MIT"
+}

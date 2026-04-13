@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; img-src 'self' file: data:; style-src 'self' 'unsafe-inline';" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EMX Flower Analyzer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1 class="app-title">🌸 EMX Flower Analyzer</h1>
+      <p class="app-subtitle">AI-powered flower identification &amp; stem counting</p>
+    </header>
+
+    <main class="app-main">
+      <!-- Left panel: image upload -->
+      <section class="panel panel-image">
+        <div id="drop-zone" class="drop-zone" role="button" tabindex="0" aria-label="Select or drop a flower image">
+          <div id="drop-placeholder" class="drop-placeholder">
+            <span class="drop-icon">🖼️</span>
+            <p>Click or drag &amp; drop a flower image here</p>
+            <p class="drop-hint">Supported: JPG, PNG, BMP, WEBP, TIFF</p>
+          </div>
+          <img id="preview-img" class="preview-img hidden" alt="Selected flower image" />
+        </div>
+        <div class="button-row">
+          <button id="btn-select" class="btn btn-primary">📂 Select Image</button>
+          <button id="btn-analyze" class="btn btn-accent" disabled>🔍 Analyze</button>
+        </div>
+      </section>
+
+      <!-- Right panel: results -->
+      <section class="panel panel-results">
+        <h2 class="panel-title">Analysis Results</h2>
+
+        <div id="results-placeholder" class="results-placeholder">
+          <span class="results-icon">🌼</span>
+          <p>Select an image and click <strong>Analyze</strong> to get started.</p>
+        </div>
+
+        <div id="results-content" class="results-content hidden">
+          <!-- Flower identification -->
+          <div class="result-card">
+            <h3 class="result-card-title">🌺 Flower Identification</h3>
+            <div id="flower-results" class="flower-results"></div>
+          </div>
+
+          <!-- Stem count -->
+          <div class="result-card">
+            <h3 class="result-card-title">🌿 Stem Count</h3>
+            <div id="stem-results" class="stem-results">
+              <span id="stem-count-value" class="stem-count-value">—</span>
+              <span class="stem-count-label">stems detected</span>
+            </div>
+            <p id="stem-method" class="stem-method"></p>
+          </div>
+        </div>
+
+        <!-- Loading spinner -->
+        <div id="loading" class="loading hidden">
+          <div class="spinner"></div>
+          <p>Analyzing image…</p>
+        </div>
+
+        <!-- Error display -->
+        <div id="error-box" class="error-box hidden">
+          <span class="error-icon">⚠️</span>
+          <p id="error-message"></p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <p>EMX Flower Analyzer v1.0 — Powered by AI &amp; OpenCV</p>
+    </footer>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

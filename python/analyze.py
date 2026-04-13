@@ -82,9 +82,9 @@ def main() -> None:
             stem_method = (
                 "OWL-ViT zero-shot detection + ViT classification per bloom"
             )
-    except Exception:  # noqa: BLE001
-        # Detection pipeline unavailable or failed; fall through to fallback.
-        pass
+    except Exception as exc:  # noqa: BLE001
+        # Log why the detection pipeline failed so it's visible in the error log.
+        print(f"Detection pipeline unavailable ({exc}); using whole-image fallback.", file=sys.stderr)
 
     # ── Stage 2: Whole-image fallback ─────────────────────────────────────────
     if flowers is None:

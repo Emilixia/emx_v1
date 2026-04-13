@@ -110,13 +110,13 @@ class TestFlowerDetector(unittest.TestCase):
         self.assertAlmostEqual(self._det_mod._iou(box, box), 1.0)
 
     def test_iou_non_overlapping(self):
-        det = self._make_detector()  # noqa: F841 (loads module)
+        self._make_detector()
         a = {"xmin": 0, "ymin": 0, "xmax": 10, "ymax": 10}
         b = {"xmin": 20, "ymin": 20, "xmax": 30, "ymax": 30}
         self.assertAlmostEqual(self._det_mod._iou(a, b), 0.0)
 
     def test_iou_partial_overlap(self):
-        det = self._make_detector()  # noqa: F841
+        self._make_detector()
         a = {"xmin": 0, "ymin": 0, "xmax": 10, "ymax": 10}
         b = {"xmin": 5, "ymin": 5, "xmax": 15, "ymax": 15}
         iou = self._det_mod._iou(a, b)
@@ -126,7 +126,7 @@ class TestFlowerDetector(unittest.TestCase):
     # ── _nms() ────────────────────────────────────────────────────────────────
 
     def test_nms_removes_overlapping_lower_score(self):
-        det = self._make_detector()  # noqa: F841
+        self._make_detector()
         detections = [
             {
                 "score": 0.9,
@@ -144,7 +144,7 @@ class TestFlowerDetector(unittest.TestCase):
         self.assertEqual(kept[0]["score"], 0.9)
 
     def test_nms_keeps_non_overlapping(self):
-        det = self._make_detector()  # noqa: F841
+        self._make_detector()
         detections = [
             {
                 "score": 0.9,
@@ -161,7 +161,7 @@ class TestFlowerDetector(unittest.TestCase):
         self.assertEqual(len(kept), 2)
 
     def test_nms_empty_input(self):
-        det = self._make_detector()  # noqa: F841
+        self._make_detector()
         self.assertEqual(self._det_mod._nms([]), [])
 
 

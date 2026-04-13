@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self'; img-src 'self' file: data:; style-src 'self' 'unsafe-inline';" />
+    content="default-src 'self'; img-src 'self' file: data: https://upload.wikimedia.org; style-src 'self' 'unsafe-inline'; connect-src https://en.wikipedia.org;" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EMX Flower Analyzer</title>
   <link rel="stylesheet" href="styles.css" />
@@ -56,6 +56,29 @@
               <span class="stem-count-label">stems detected</span>
             </div>
             <p id="stem-method" class="stem-method"></p>
+          </div>
+
+          <!-- Additional information (Wikipedia) -->
+          <div class="result-card" id="wiki-card">
+            <h3 class="result-card-title">🌐 Additional Information</h3>
+            <div id="wiki-content" class="wiki-content">
+              <div id="wiki-loading" class="wiki-loading hidden">
+                <div class="spinner spinner-sm"></div>
+                <span>Fetching information…</span>
+              </div>
+              <div id="wiki-body" class="wiki-body hidden">
+                <div id="wiki-top" class="wiki-top">
+                  <img id="wiki-thumbnail" class="wiki-thumbnail hidden" alt="Flower thumbnail" />
+                  <div id="wiki-text" class="wiki-text">
+                    <p id="wiki-extract" class="wiki-extract"></p>
+                  </div>
+                </div>
+                <div class="wiki-actions">
+                  <button id="wiki-read-more" class="btn btn-wiki">🔗 Read more on Wikipedia</button>
+                </div>
+              </div>
+              <p id="wiki-none" class="wiki-none hidden">No additional information found online.</p>
+            </div>
           </div>
         </div>
 

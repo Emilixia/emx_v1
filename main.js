@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
 const fs = require('fs');
@@ -111,4 +111,13 @@ ipcMain.handle('analyze-image', async (_event, imagePath) => {
       reject(new Error(`Failed to start Python: ${err.message}. Ensure Python is installed and in PATH.`));
     });
   });
+});
+
+// Safely open external URLs in the system browser
+ipcMain.handle('open-external-url', (_event, url) => {
+  const parsedUrl = new URL(url);
+  if (parsedUrl.protocol !== 'https:' && parsedUrl.protocol !== 'http:') {
+    throw new Error('Only http/https URLs are allowed.');
+  }
+  return shell.openExternal(url);
 });

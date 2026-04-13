@@ -16,6 +16,13 @@ const flowerResults = document.getElementById('flower-results');
 const stemCountValue = document.getElementById('stem-count-value');
 const stemMethod = document.getElementById('stem-method');
 
+const wikiLoading = document.getElementById('wiki-loading');
+const wikiBody = document.getElementById('wiki-body');
+const wikiNone = document.getElementById('wiki-none');
+const wikiExtract = document.getElementById('wiki-extract');
+const wikiThumbnail = document.getElementById('wiki-thumbnail');
+const wikiReadMore = document.getElementById('wiki-read-more');
+
 let currentImagePath = null;
 
 // ─── Image loading helpers ──────────────────────────────────
@@ -34,6 +41,11 @@ function resetResults() {
   errorBox.classList.add('hidden');
   loadingEl.classList.add('hidden');
   resultsPlaceholder.classList.remove('hidden');
+  // Reset wiki card
+  wikiLoading.classList.add('hidden');
+  wikiBody.classList.add('hidden');
+  wikiNone.classList.add('hidden');
+  wikiReadMore.onclick = null;
 }
 
 // ─── Button: Select image ──────────────────────────────────
@@ -133,12 +145,79 @@ function renderResults(data) {
 
   resultsPlaceholder.classList.add('hidden');
   resultsContent.classList.remove('hidden');
+
+  // Kick off Wikipedia lookup for the top prediction
+  if (predictions.length > 0) {
+    fetchFlowerInfo(predictions[0].label);
+  }
 }
 
 function showError(msg) {
   errorMessage.textContent = msg;
   errorBox.classList.remove('hidden');
   resultsPlaceholder.classList.add('hidden');
+}
+
+// ─── Wikipedia lookup ─────────────────────────────────────
+
+async function fetchFlowerInfo(rawLabel) {
+  // Show loading state inside the wiki card
+  wikiLoading.classList.remove('hidden');
+  wikiBody.classList.add('hidden');
+  wikiNone.classList.add('hidden');
+
+  // Normalise the label: replace underscores/hyphens with spaces, title-case
+  const searchTerm = rawLabel.replace(/[_-]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+
+  try {
+    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(searchTerm)}`;
+    const response = await fetch(url, { headers: { Accept: 'application/json' } });
+
+    if (!response.ok) {
+      // Try a broader search via the opensearch API to find the best match
+      const searchUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(searchTerm.split(' ')[0])}`;
+      const fallback = await fetch(searchUrl, { headers: { Accept: 'application/json' } });
+      if (!fallback.ok) throw new Error('Not found');
+      renderWikiResult(await fallback.json());
+    } else {
+      renderWikiResult(await response.json());
+    }
+  } catch (_err) {
+    wikiLoading.classList.add('hidden');
+    wikiNone.classList.remove('hidden');
+  }
+}
+
+function renderWikiResult(data) {
+  wikiLoading.classList.add('hidden');
+
+  const extract = data.extract || '';
+  const pageUrl = data.content_urls && data.content_urls.desktop && data.content_urls.desktop.page;
+  const thumb = data.thumbnail && data.thumbnail.source;
+
+  if (!extract && !pageUrl) {
+    wikiNone.classList.remove('hidden');
+    return;
+  }
+
+  wikiExtract.textContent = extract || 'No description available.';
+
+  if (thumb) {
+    wikiThumbnail.src = thumb;
+    wikiThumbnail.alt = data.title || 'Flower';
+    wikiThumbnail.classList.remove('hidden');
+  } else {
+    wikiThumbnail.classList.add('hidden');
+  }
+
+  if (pageUrl) {
+    wikiReadMore.classList.remove('hidden');
+    wikiReadMore.onclick = () => window.flowerAPI.openUrl(pageUrl);
+  } else {
+    wikiReadMore.classList.add('hidden');
+  }
+
+  wikiBody.classList.remove('hidden');
 }
 
 function escapeHtml(str) {

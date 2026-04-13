@@ -91,13 +91,12 @@ body {
 }
 
 .panel-title {
-  font-size: 1.1rem;
+  font-size: 0.78rem;
   font-weight: 600;
   margin-bottom: 4px;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  font-size: 0.78rem;
 }
 
 /* ─── Drop Zone ─────────────────────────────────────────── */
@@ -348,3 +347,77 @@ body {
 
 /* ─── Utilities ─────────────────────────────────────────── */
 .hidden { display: none !important; }
+
+/* ─── Wiki info card ────────────────────────────────────── */
+.wiki-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  padding: 4px 0;
+}
+
+.spinner-sm {
+  width: 20px;
+  height: 20px;
+  border-width: 3px;
+  flex-shrink: 0;
+}
+
+.wiki-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wiki-top {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.wiki-thumbnail {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+
+.wiki-text { flex: 1; }
+
+.wiki-extract {
+  font-size: 0.83rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.wiki-actions { display: flex; }
+
+.btn-wiki {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary-hover);
+  padding: 7px 14px;
+  font-size: 0.82rem;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.btn-wiki:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+.wiki-none {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
